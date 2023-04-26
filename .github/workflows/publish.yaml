@@ -1,0 +1,9 @@
+name: Publish
+
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    uses: canonical/kratos-rock/.github/workflows/publish.yaml@main
+    secrets: inherit

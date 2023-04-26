@@ -1,0 +1,9 @@
+name: Scan
+
+on:
+  workflow_call:
+
+jobs:
+  scan:
+    uses: canonical/kratos-rock/.github/workflows/scan.yaml@main
+    secrets: inherit

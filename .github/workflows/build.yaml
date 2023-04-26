@@ -1,0 +1,9 @@
+name: Build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    uses: canonical/kratos-rock/.github/workflows/build.yaml@main
+    secrets: inherit
