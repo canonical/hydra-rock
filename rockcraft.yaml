@@ -1,0 +1,29 @@
+name: hydra
+base: bare
+build-base: ubuntu:22.04
+version: "2.1.1"
+summary: Ory Hydra
+description: |
+  Ory Hydra is a hardened and certified OAuth 2.0 and OpenID Connect provider.
+license: Apache-2.0
+platforms:
+  amd64:
+
+services:
+  hydra:
+    override: replace
+    command: hydra serve
+    startup: enabled
+
+parts:
+  hydra:
+    plugin: go
+    build-snaps:
+      - go/1.19/stable
+    source: https://github.com/ory/hydra
+    source-type: git
+    build-environment:
+      - GOFLAGS: -ldflags=-w -ldflags=-s
+    go-buildtags:
+      - hsm
+    source-tag: v2.1.1
