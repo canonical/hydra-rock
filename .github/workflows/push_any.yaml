@@ -1,5 +1,8 @@
 name: Push (any)
 
+# When pushing to any branch other than "main", we:
+# * build the rock image
+
 on:
   push:
     branches-ignore:
