@@ -20,10 +20,9 @@ parts:
     plugin: go
     build-snaps:
       - go/1.19/stable
-    source: https://github.com/ory/hydra
-    source-type: git
     build-environment:
       - GOFLAGS: -ldflags=-w -ldflags=-s
-    go-buildtags:
-      - hsm
+      - CGO_ENABLED: 0
+    source: https://github.com/ory/hydra
+    source-type: git
     source-tag: v2.1.1
