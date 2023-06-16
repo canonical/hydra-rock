@@ -48,7 +48,7 @@ parts:
 
       export CGO_ENABLED=0
       go mod download all
-      go install -ldflags="${go_linker_flags}" -p 1 ./...
+      go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
     source: https://github.com/ory/hydra
     source-type: git
     source-tag: v2.1.1
