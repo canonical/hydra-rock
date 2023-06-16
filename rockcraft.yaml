@@ -6,6 +6,7 @@ summary: Ory Hydra
 description: |
   Ory Hydra is a hardened and certified OAuth 2.0 and OpenID Connect provider.
 license: Apache-2.0
+run-user: _daemon_
 platforms:
   amd64:
 
