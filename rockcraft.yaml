@@ -35,9 +35,20 @@ parts:
     plugin: go
     build-snaps:
       - go/1.19/stable
-    build-environment:
-      - GOFLAGS: -ldflags=-w -ldflags=-s
-      - CGO_ENABLED: 0
+    override-build: |
+      src_config_path="github.com/ory/hydra/v2/driver"
+      build_ver="${src_config_path}/config.Version"
+      build_hash="${src_config_path}/config.Commit"
+      build_date="${src_config_path}/config.Date"
+      go_linker_flags="-w \
+                       -s \
+                       -X ${build_ver}=$(git -C "${CRAFT_PART_SRC}" describe --tags) \
+                       -X ${build_hash}=$(git -C "${CRAFT_PART_SRC}" rev-parse HEAD) \
+                       -X ${build_date}=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+      export CGO_ENABLED=0
+      go mod download all
+      go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
     source: https://github.com/ory/hydra
     source-type: git
     source-tag: v2.1.1
