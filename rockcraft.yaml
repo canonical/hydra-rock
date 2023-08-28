@@ -31,6 +31,11 @@ parts:
       # This is needed to pipe the stdout/stderr to a file for log forwarding
       - dash
 
+  certificates:
+    plugin: nil
+    stage-packages:
+      - ca-certificates
+
   hydra:
     plugin: go
     build-snaps:
