@@ -1,7 +1,7 @@
 name: hydra
 base: bare
-build-base: ubuntu:22.04
-version: "2.1.1"
+build-base: ubuntu@22.04
+version: "2.x.xbeta"
 summary: Ory Hydra
 description: |
   Ory Hydra is a hardened and certified OAuth 2.0 and OpenID Connect provider.
@@ -39,7 +39,7 @@ parts:
   hydra:
     plugin: go
     build-snaps:
-      - go/1.19/stable
+      - go/1.21/stable
     override-build: |
       src_config_path="github.com/ory/hydra/v2/driver"
       build_ver="${src_config_path}/config.Version"
@@ -54,6 +54,6 @@ parts:
       export CGO_ENABLED=0
       go mod download all
       go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
-    source: https://github.com/ory/hydra
+    source: https://github.com/BuzzBumbleBee/hydra
     source-type: git
-    source-tag: v2.1.1
+    source-branch: feat_dev_grants_2x
