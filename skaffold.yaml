@@ -1,0 +1,50 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+build:
+  artifacts:
+  - image: "flow-test"
+    context: hack/flow-test
+    docker:
+      dockerfile: hack/flow-test/Dockerfile
+  - image: "hydra"
+    custom:
+      buildCommand: ./build.sh
+      dependencies:
+        paths:
+          - rockcraft.yaml
+    platforms: ["linux/amd64"]
+  local:
+    push: true
+
+# manifests:
+#   rawYaml:
+#     - hack/kubectl/*
+
+deploy:
+  helm:
+    releases:
+      - name: postgresql
+        remoteChart: oci://registry-1.docker.io/bitnamicharts/postgresql
+        valuesFiles: ["hack/helm/postgresql.yaml"]
+      - name: hydra
+        remoteChart: hydra
+        repo: https://k8s.ory.sh/helm/charts
+        wait: false
+        upgradeOnChange: true
+        valuesFiles: ["hack/helm/hydra.yaml"]
+        setValueTemplates:
+          image.repository: "{{.IMAGE_REPO_hydra}}"
+          image.tag: "{{.IMAGE_TAG_hydra}}@{{.IMAGE_DIGEST_hydra}}"
+
+
+portForward:
+  - resourceType: service
+    resourceName: hydra-public
+    namespace: default
+    port: 4444
+    localPort: 4444
+  - resourceType: service
+    resourceName: hydra-admin
+    namespace: default
+    port: 4445
+    localPort: 4445
