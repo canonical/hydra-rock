@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: flow-test
+  name: flow-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flow-test
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: flow-test
+    spec:
+      containers:
+      - name: flow-test
+        image: flow-test
+        command: ["/app"]
+        envFrom:
+          - configMapRef:
+              name: flow-test-hydra
+          # - configMapRef:
+          #     name: flow-test-github
+        volumeMounts:
+        - name: tls
+          mountPath: "/ssl/certs/iam.crt"
+          subPath: tls.crt
+          readOnly: true
+        - name: tls
+          mountPath: "/ssl/certs/iam.ca.crt"
+          subPath: ca.crt
+          readOnly: true
+      volumes:
+        - name: tls
+          secret:
+            secretName: iam-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: flow-test
+  name: flow-test
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: 8000
+  selector:
+    app: flow-test
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flow-test-hydra
+data:
+  CALLBACK_URI: http://flow-test.default.svc.cluster.local/api/ready
+  # OAUTH_CLIENT_SECRET: KOVbs8SDizELCUQhFEDLYPA4zN
+  OAUTH_CLIENT_ID: cc0bb6ac-deda-4d6c-83bf-c919d8af91ed
+  SCOPES: openid,offline
+  PROVIDER: "0" # hydra
+  AUTH_URL: http://hydra-public.default.svc.cluster.local:4444/oauth2/auth
+  TOKEN_URL: http://hydra-public.default.svc.cluster.local:4444/oauth2/token
+  DEVICE_AUTH_URL: http://hydra-public.default.svc.cluster.local:4444/oauth2/device/auth
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flow-test-github
+data:
+  AUTH_CLIENT_SECRET: "abcdefghi"
+  OAUTH_CLIENT_ID: "abcdefghi"
+  SCOPES: user,repo
+  PROVIDER: "1" # github
