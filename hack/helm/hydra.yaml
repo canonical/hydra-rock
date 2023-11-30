@@ -1,0 +1,229 @@
+hydra:
+  dev: "true"
+  config:
+    log:
+      level: debug
+      leak_sensitive_values: true
+    serve:
+      cookies:
+        same_site_mode: Lax
+    dsn: "postgres://iam:iam@postgresql.default.svc.cluster.local/hydra?sslmode=disable&max_conn_lifetime=10s"
+    # dsn: memory
+    secrets:
+      system: 
+        - SUFNUGxhdGZvcm0K
+    webfinger:
+      jwks:
+        broadcast_keys:
+          - hydra.openid.id-token
+      oidc_discovery:
+        jwks_url: https://iam.internal/.well-known/jwks.json
+        auth_url: https://iam.internal/oauth2/auth
+        token_url: https://iam.internal/oauth2/token
+        device_authorization_url: https://iam.internal/oauth2/device/auth
+    urls:
+      self:
+        issuer: https://iam.internal/
+        public: https://iam.internal/  
+      login: https://iam.internal/ui/login
+      consent: https://iam.internal/ui/consent
+      device: http://iam.internal/admin/oauth2/auth/requests/device/verify
+      # device: http://iam.internal:9000/api/device # this relies on the fact i have localhost as iam.internal and a script with server on port 9000 
+      post_device_done: https://iam.internal/api/v0/status
+      error: https://iam.internal//ui/oidc_error
+    ttl:
+      # configures how long a user login and consent flow may take. Defaults to 1h.
+      login_consent_request: 1h
+      # configures how long access tokens are valid. Defaults to 1h.
+      access_token: 1h
+      # configures how long refresh tokens are valid. Defaults to 720h. Set to -1 for refresh tokens to never expire.
+      refresh_token: 720h
+      # configures how long id tokens are valid. Defaults to 1h.
+      id_token: 1h
+      # configures how long auth codes are valid. Defaults to 10m.
+      auth_code: 30m
+      # configures how long device and user codes are valid. Defaults to 10m.
+      device_user_code: 30m
+    oauth2:
+      # Set this to true if you want to share error debugging information with your OAuth 2.0 clients.
+      #	Keep in mind that debug information is very valuable when dealing with errors, but might also expose database error
+      #	codes and similar errors. Defaults to false.
+      expose_internal_errors: true
+      # Configures hashing algorithms. Supports only BCrypt at the moment.
+      hashers:
+        # Configures the BCrypt hashing algorithm used for hashing Client Secrets.
+        bcrypt:
+          # Sets the BCrypt cost. Minimum value is 4 and default value is 10. The higher the value, the more CPU time is being
+          # used to generate hashes.
+          cost: 10
+      pkce:
+        # Set this to true if you want PKCE to be enforced for all clients.
+        enforced: false
+        # Set this to true if you want PKCE to be enforced for public clients.
+        enforced_for_public_clients: false
+      session:
+        # store encrypted data in database, default true
+        encrypt_at_rest: true
+      device_authorization:
+        # configure how often a non-interactive device should poll the device token endpoint, default 5s
+        token_polling_interval: 5s
+  automigration:
+    enabled: true
+maester:
+  enabled: false
+
+# https://github.com/ory/hydra/pull/3252/files -- internal/config/config.yaml
+# log:
+#   level: debug
+#   leak_sensitive_values: false
+#   format: json
+
+# serve:
+#   public:
+#     port: 1
+#     host: localhost
+#     socket:
+#       owner: hydra
+#       group: hydra-public-api
+#       mode: 0775
+#     cors:
+#       enabled: false
+#       allowed_origins:
+#         - https://example.com
+#       allowed_methods:
+#         - GET
+#       allowed_headers:
+#         - Authorization
+#       exposed_headers:
+#         - Content-Type
+#       allow_credentials: true
+#       max_age: 1
+#       debug: false
+#     request_log:
+#       disable_for_health: false
+#   admin:
+#     port: 2
+#     host: localhost
+#     socket:
+#       owner: hydra
+#       group: hydra-admin-api
+#       mode: 0770
+
+#     cors:
+#       enabled: false
+#       allowed_origins:
+#         - https://example.com
+#       allowed_methods:
+#         - GET
+#       allowed_headers:
+#         - Authorization
+#       exposed_headers:
+#         - Content-Type
+#       allow_credentials: true
+#       max_age: 1
+#       debug: false
+#     request_log:
+#       disable_for_health: false
+#   tls:
+#     key:
+#       path: /path/to/file.pem
+#     cert:
+#       base64: b3J5IGh5ZHJhIGlzIGF3ZXNvbWUK
+#     allow_termination_from:
+#       - 127.0.0.1/32
+#   cookies:
+#     same_site_mode: Lax
+#     same_site_legacy_workaround: true
+
+# dsn: memory
+
+# hsm:
+#   enabled: false
+
+# webfinger:
+#   jwks:
+#     broadcast_keys:
+#       - hydra.openid.id-token
+#   oidc_discovery:
+#     jwks_url: https://example.com/jwks.json
+#     auth_url: https://example.com/auth
+#     token_url: https://example.com/token
+#     client_registration_url: https://example.com
+#     device_authorization_url: https://example.com/device_authorization
+#     supported_claims:
+#       - username
+#     supported_scope:
+#       - whatever
+#     userinfo_url: https://example.com
+
+# oidc:
+#   subject_identifiers:
+#     supported_types:
+#       - pairwise
+#     pairwise:
+#       salt: random_salt
+#   dynamic_client_registration:
+#     enabled: false
+#     default_scope:
+#       - whatever
+
+# urls:
+#   self:
+#     issuer: https://issuer
+#     public: https://public
+#     admin: https://admin
+#   login: https://login
+#   consent: https://consent
+#   logout: https://logout
+#   device: https://device
+#   error: https://error
+#   post_device_done: https://post_device
+#   post_logout_redirect: https://post_logout
+
+# strategies:
+#   scope: exact
+#   access_token: opaque
+
+# ttl:
+#   login_consent_request: 2h
+#   access_token: 2h
+#   refresh_token: 2h
+#   id_token: 2h
+#   auth_code: 2h
+#   device_user_code: 2h
+
+# oauth2:
+#   expose_internal_errors: true
+#   device_authorization:
+#     token_polling_interval: 2h
+#   hashers:
+#     bcrypt:
+#       cost: 20
+#   pkce:
+#     enforced: true
+#     enforced_for_public_clients: true
+
+# secrets:
+#   system:
+#     - some-random-system-secret
+#   cookie:
+#     - some-random-cookie-secret
+
+# profiling: cpu
+
+# tracing:
+#   provider: jaeger
+#   service_name: hydra service
+#   providers:
+#     jaeger:
+#       local_agent_address: 127.0.0.1:6831
+#       sampling:
+#         trace_id_ratio: 1
+#         server_url: http://sampling
+#     zipkin:
+#       server_url: http://zipkin/api/v2/spans
+#     otlp:
+#       insecure: true
+#       server_url: localhost:4318
+#       sampling:
+#         sampling_ratio: 1.0
