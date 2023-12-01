@@ -1,0 +1,160 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: iam
+  name: iam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iam
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: iam
+    spec:
+      containers:
+      - name: iam
+        image: ghcr.io/canonical/identity-platform-login-ui:v0.11.3
+        envFrom:
+          - configMapRef:
+              name: iam
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: iam
+  name: iam
+spec:
+  ports:
+    - name: web
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: iam
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iam
+data:
+  TRACING_ENABLED: "false"
+  BASE_URL: https://iam.internal
+  KRATOS_PUBLIC_URL: http://kratos-public.default.svc.cluster.local
+  HYDRA_ADMIN_URL: http://hydra-admin.default.svc.cluster.local:4445
+  PORT: "8000"
+  LOG_LEVEL: "debug"
+  DEBUG: "true"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: iam
+  labels:
+    app: iam
+spec:
+  tls:
+  - hosts:
+      - iam.internal
+    secretName: iam-tls
+  defaultBackend:
+    service:
+      name: iam
+      port:
+        number: 8000
+  rules:
+  - host: iam.internal
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/ui/"
+        backend:
+          service:
+            name: iam
+            port:
+              number: 8000
+      - pathType: Prefix
+        path: "/api/kratos"
+        backend:
+          service:
+            name: iam
+            port:
+              number: 8000
+      - pathType: Exact
+        path: "/api/consent"
+        backend:
+          service:
+            name: iam
+            port:
+              number: 8000
+      - pathType: Prefix
+        path: "/self-service/"
+        backend:
+          service:
+            name: kratos-public
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/sessions/"
+        backend:
+          service:
+            name: kratos-public
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/oauth2/"
+        backend:
+          service:
+            name: hydra-public
+            port:
+              number: 4444
+      - pathType: Exact
+        path: "/.well-known/jwks.json"
+        backend:
+          service:
+            name: hydra-public
+            port:
+              number: 4444
+  - host: iam.internal
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/admin/clients"
+        backend:
+          service:
+            name: hydra-admin
+            port:
+              number: 4445
+      - pathType: Prefix
+        path: "/admin/keys"
+        backend:
+          service:
+            name: hydra-admin
+            port:
+              number: 4445
+      - pathType: Prefix
+        path: "/admin/oauth2"
+        backend:
+          service:
+            name: hydra-admin
+            port:
+              number: 4445
+      - pathType: Prefix
+        path: "/admin/identities"
+        backend:
+          service:
+            name: kratos-admin
+            port:
+              number: 80
+      - pathType: Prefix
+        path: "/admin/sessions"
+        backend:
+          service:
+            name: kratos-admin
+            port:
+              number: 80
