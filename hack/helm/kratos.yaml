@@ -1,0 +1,173 @@
+kratos:
+  development: true
+  config:
+    log:
+        level: debug
+        format: text
+        leak_sensitive_values: true
+    serve:
+      public:
+        base_url: https://iam.internal
+        cors:
+          enabled: true
+      admin:
+        base_url: http://kratos-admin.default.svc.cluster.local
+    dsn: "postgres://iam:iam@postgresql.default.svc.cluster.local/kratos?sslmode=disable&max_conn_lifetime=10s"
+    secrets:
+      default:
+        - SUFNUGxhdGZvcm0K
+      cookie:
+        - fmtGCN1S4euicZhOi8bBtkdeDIrRL5KZ
+    identity:
+      default_schema_id: default
+      schemas:
+        - id: default
+          url: file:///etc/config/identity.schema.json
+    courier:
+      smtp:
+        connection_uri: smtps://test:test@mailslurper:1025/?skip_ssl_verify=true
+    oauth2_provider:
+      url: http://hydra-admin.default.svc.cluster.local:4445
+    selfservice:
+      allowed_return_urls:
+        - https://iam.internal
+      default_browser_return_url:
+          https://iam.internal
+      flows:
+          error:
+              ui_url: https://iam.internal/ui/error
+          login:
+              ui_url: https://iam.internal/ui/login
+          registration:
+              after:
+                  oidc:
+                      hooks:
+                      - hook: session 
+      methods:
+          password:
+              enabled: False
+          oidc:
+              enabled: True
+              config:
+                  providers:
+                  - id: "microsoft"
+                    provider: "microsoft"
+                    mapper_url: "file:///etc/config/microsoft_schema.jsonnet"
+                    scope: ["profile", "email", "address", "phone"]
+                    client_id: "************"
+                    client_secret: "************"
+                    microsoft_tenant: "************"
+  automigration:
+    enabled: true
+  identitySchemas:
+    "microsoft_schema.jsonnet": |
+      local claims = std.extVar('claims');
+
+      {
+        identity: {
+          traits: {
+            [if 'email' in claims then 'email' else null]: claims.email,
+            [if 'name' in claims then 'name' else null]: claims.name,
+            [if 'given_name' in claims then 'given_name' else null]: claims.given_name,
+            [if 'family_name' in claims then 'family_name' else null]: claims.family_name,
+            [if 'last_name' in claims then 'last_name' else null]: claims.last_name,
+            [if 'middle_name' in claims then 'middle_name' else null]: claims.middle_name,
+            [if 'nickname' in claims then 'nickname' else null]: claims.nickname,
+            [if 'preferred_username' in claims then 'preferred_username' else null]: claims.preferred_username,
+            [if 'profile' in claims then 'profile' else null]: claims.profile,
+            [if 'picture' in claims then 'picture' else null]: claims.picture,
+            [if 'website' in claims then 'website' else null]: claims.website,
+            [if 'gender' in claims then 'gender' else null]: claims.gender,
+            [if 'birthdate' in claims then 'birthdate' else null]: claims.birthdate,
+            [if 'zoneinfo' in claims then 'zoneinfo' else null]: claims.zoneinfo,
+            [if 'phone_number' in claims && claims.phone_number_verified then 'phone_number' else null]: claims.phone_number,
+            [if 'locale' in claims then 'locale' else null]: claims.locale,
+            [if 'team' in claims then 'team' else null]: claims.team,
+          },
+        },
+      }
+    "identity.schema.json": |
+      {
+        "$id": "https://schemas.canonical.com/presets/kratos/user_v0.json",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Person",
+        "type": "object",
+        "properties": {
+          "traits": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name"
+              },
+              "given_name": {
+                "type": "string",
+                "title": "Given Name"
+              },
+              "family_name": {
+                "type": "string",
+                "title": "Family Name"
+              },
+              "last_name": {
+                "type": "string",
+                "title": "Last Name"
+              },
+              "middle_name": {
+                "type": "string",
+                "title": "Middle Name"
+              },
+              "nickname": {
+                "type": "string",
+                "title": "Nickname"
+              },
+              "preferred_username": {
+                "type": "string",
+                "title": "Preferred Username"
+              },
+              "profile": {
+                "type": "string",
+                "title": "Profile"
+              },
+              "picture": {
+                "type": "string",
+                "title": "Picture"
+              },
+              "website": {
+                "type": "string",
+                "title": "Website"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "title": "E-Mail"
+              },
+              "gender": {
+                "type": "string",
+                "title": "Gender"
+              },
+              "birthdate": {
+                "type": "string",
+                "title": "Birthdate"
+              },
+              "zoneinfo": {
+                "type": "string",
+                "title": "Zoneinfo"
+              },
+              "locale": {
+                "type": "string",
+                "title": "Locale"
+              },
+              "phone_number": {
+                "type": "string",
+                "title": "Phone Number"
+              },
+              "address": {
+                "type": "string",
+                "title": "Address"
+              }
+            },
+            "required": ["email"]
+          },
+          "additionalProperties": true
+        }
+      }
