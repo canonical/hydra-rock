@@ -19,6 +19,7 @@ build:
 manifests:
   rawYaml:
     - hack/kubectl/iam.yaml
+    - hack/kubectl/flow-test.yaml
 
 deploy:
   helm:
@@ -41,6 +42,27 @@ deploy:
         valuesFiles: ["hack/helm/kratos.yaml"]
         wait: false
         upgradeOnChange: true
+
+profiles:
+  - name: https
+    requiresAllActivations: false
+    patches:
+    - op: remove
+      path: /build/artifacts
+    manifests:
+      rawYaml:
+        - hack/kubectl/ca.yaml
+    deploy:
+      helm:
+        releases:
+          - name: cert-manager
+            repo: https://charts.jetstack.io
+            remoteChart: cert-manager
+            setValues:
+              installCRDs: true 
+          - name: contour
+            remoteChart: oci://registry-1.docker.io/bitnamicharts/contour
+
 
 portForward:
   - resourceType: service
@@ -68,3 +90,13 @@ portForward:
     namespace: default
     port: 8000
     localPort: 8000
+  - resourceType: service
+    resourceName: contour-envoy
+    namespace: default
+    port: 443
+    localPort: 8443
+  - resourceType: service
+    resourceName: contour-envoy
+    namespace: default
+    port: 80
+    localPort: 8080
