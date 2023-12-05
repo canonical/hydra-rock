@@ -2,10 +2,19 @@ apiVersion: skaffold/v4beta6
 kind: Config
 build:
   artifacts:
+  - image: "identity-platform-login-ui"
+    context: hack/login-ui
+    custom:
+      buildCommand: ./build.sh
+      dependencies:
+        paths:
+          - rockcraft.yaml
+    platforms: ["linux/amd64"]
   - image: "flow-test"
     context: hack/flow-test
     docker:
-      dockerfile: hack/flow-test/Dockerfile
+      dockerfile: Dockerfile
+    platforms: ["linux/amd64"]
   - image: "hydra"
     custom:
       buildCommand: ./build.sh

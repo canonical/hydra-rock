@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: iam
-        image: ghcr.io/canonical/identity-platform-login-ui:v0.11.3
+        image: identity-platform-login-ui
         envFrom:
           - configMapRef:
               name: iam
@@ -73,6 +73,13 @@ spec:
       paths:
       - pathType: Prefix
         path: "/ui/"
+        backend:
+          service:
+            name: iam
+            port:
+              number: 8000
+      - pathType: Prefix
+        path: "/api/device"
         backend:
           service:
             name: iam
