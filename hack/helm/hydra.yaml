@@ -27,8 +27,8 @@ hydra:
         public: https://iam.internal/  
       login: https://iam.internal/ui/login
       consent: https://iam.internal/ui/consent
-      device: http://iam.internal/admin/oauth2/auth/requests/device/verify
-      # device: http://iam.internal:9000/api/device # this relies on the fact i have localhost as iam.internal and a script with server on port 9000 
+      # device: http://iam.internal/admin/oauth2/auth/requests/device/verify
+      device: https://iam.internal/ui/device
       post_device_done: https://iam.internal/api/v0/status
       error: https://iam.internal//ui/oidc_error
     ttl:
