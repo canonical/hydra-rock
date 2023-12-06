@@ -44,12 +44,11 @@ metadata:
   name: iam
 data:
   TRACING_ENABLED: "false"
-  BASE_URL: https://iam.internal
+  BASE_URL: https://iam.internal:8443
   KRATOS_PUBLIC_URL: http://kratos-public.default.svc.cluster.local
   HYDRA_ADMIN_URL: http://hydra-admin.default.svc.cluster.local:4445
   PORT: "8000"
-  LOG_LEVEL: "debug"
-  DEBUG: "true"
+  LOG_LEVEL: "info"
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

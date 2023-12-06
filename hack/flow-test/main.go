@@ -9,9 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	chi "github.com/go-chi/chi/v5"
 	"github.com/kelseyhightower/envconfig"
+	client "github.com/ory/hydra-client-go/v2"
 	qrcode "github.com/skip2/go-qrcode"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.uber.org/zap"
 	oauth2 "golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
@@ -160,20 +161,31 @@ type EnvSpec struct {
 	AuthURL           string       `envconfig:"auth_url" default:"http://localhost:4444/oauth2/auth"`
 	TokenURL          string       `envconfig:"token_url" default:"http://localhost:4444/oauth2/token"`
 	DeviceAuthURL     string       `envconfig:"device_auth_url" default:"http://localhost:4444/oauth2/device/auth"`
+	HydraAdminApiURL  string       `envconfig:"hydra_admin_api_url" default:"http://localhost:4445"`
 }
 
-func router(logger *zap.SugaredLogger) *chi.Mux {
-	router := chi.NewMux()
-
-	router.Get(
-		"/api/ready",
-		func(w http.ResponseWriter, r *http.Request) {
-			logger.Infof("query params: %v", r.URL.Query())
-			w.WriteHeader(http.StatusOK)
+func registerHydraClient(hydraAdminUrl string) string {
+	configuration := client.NewConfiguration()
+	configuration.Servers = []client.ServerConfiguration{
+		{
+			URL: hydraAdminUrl,
 		},
-	)
+	}
 
-	return router
+	configuration.HTTPClient = &http.Client{Transport: otelhttp.NewTransport(http.DefaultTransport)}
+
+	c := client.NewAPIClient(configuration)
+
+	oauthClient := client.NewOAuth2Client()
+	oauthClient.SetGrantTypes([]string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"})
+	oauthClient.SetScope("openid profile offline email")
+	oauthClient.SetTokenEndpointAuthMethod("none")
+
+	cc, _, err := c.OAuth2Api.CreateOAuth2Client(context.Background()).OAuth2Client(*oauthClient).Execute()
+	if err != nil {
+		panic("Failed to create oauth2 client " + err.Error())
+	}
+	return *cc.ClientId
 }
 
 func deviceFlow(specs *EnvSpec, logger *zap.SugaredLogger) {
@@ -181,7 +193,6 @@ func deviceFlow(specs *EnvSpec, logger *zap.SugaredLogger) {
 	config.ClientID = specs.OAuthClientID
 	config.ClientSecret = specs.OAuthClientSecret
 	config.Scopes = specs.Scopes
-	// config.RedirectURL = specs.CallbackURI
 
 	switch specs.Provider {
 	case Github:
@@ -236,13 +247,12 @@ and then swap the client-id in the flow-test-hydra configmap
 bounce the flow-test pod to pick up the changes
 ############################################################
 please enter code %s at %s
-or use following command: http --verify=/usr/local/share/ca-certificates/ca.crt %s user_code==%s --follow
+or go to %s
 ############################################################
 	`,
 			response.UserCode,
 			response.VerificationURI,
-			response.VerificationURI,
-			response.UserCode,
+			response.VerificationURIComplete,
 		)
 		if qr, err := qrcode.New(response.VerificationURIComplete, qrcode.Low); err == nil {
 			logger.Infof("############################################################")
@@ -254,11 +264,15 @@ or use following command: http --verify=/usr/local/share/ca-certificates/ca.crt 
 		if err != nil {
 			logger.Warn(err, token)
 		} else {
-			logger.Infof("Succeeded, Token: %v", token)
+			logger.Infof("You are logged in")
+			logger.Infof("Access Token: %s", token.AccessToken)
+			logger.Infof("Refresh Token: %s", token.RefreshToken)
+			logger.Infof("ID Token: %s", token.Extra("id_token"))
 		}
 
 		logger.Info("device flow done...one way or the other")
 		logger.Infof("############################################################")
+		break
 	}
 }
 
@@ -278,19 +292,9 @@ func main() {
 		panic(fmt.Errorf("issues with environment sourcing: %s", err))
 	}
 
-	srv := &http.Server{
-		Addr:         fmt.Sprintf("0.0.0.0:%v", 9000),
-		WriteTimeout: time.Second * 15,
-		ReadTimeout:  time.Second * 15,
-		IdleTimeout:  time.Second * 60,
-		Handler:      router(logger),
+	if specs.OAuthClientID == "" {
+		specs.OAuthClientID = registerHydraClient(specs.HydraAdminApiURL)
 	}
-
-	go func() {
-		if err := srv.ListenAndServe(); err != nil {
-			logger.Fatal(err)
-		}
-	}()
 
 	go deviceFlow(specs, logger)
 
@@ -299,13 +303,6 @@ func main() {
 
 	// Block until we receive our signal.
 	<-c
-
-	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	// Doesn't block if no connections, but will otherwise wait
-	// until the timeout deadline.
-	srv.Shutdown(ctx)
 
 	logger.Desugar().Sync()
 

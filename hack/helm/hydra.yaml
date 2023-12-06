@@ -10,27 +10,27 @@ hydra:
     dsn: "postgres://iam:iam@postgresql.default.svc.cluster.local/hydra?sslmode=disable&max_conn_lifetime=10s"
     # dsn: memory
     secrets:
-      system: 
+      system:
         - SUFNUGxhdGZvcm0K
     webfinger:
       jwks:
         broadcast_keys:
           - hydra.openid.id-token
       oidc_discovery:
-        jwks_url: https://iam.internal/.well-known/jwks.json
-        auth_url: https://iam.internal/oauth2/auth
-        token_url: https://iam.internal/oauth2/token
-        device_authorization_url: https://iam.internal/oauth2/device/auth
+        jwks_url: https://iam.internal:8443/.well-known/jwks.json
+        auth_url: https://iam.internal:8443/oauth2/auth
+        token_url: https://iam.internal:8443/oauth2/token
+        device_authorization_url: https://iam.internal:8443/oauth2/device/auth
     urls:
       self:
-        issuer: https://iam.internal/
-        public: https://iam.internal/  
-      login: https://iam.internal/ui/login
-      consent: https://iam.internal/ui/consent
-      # device: http://iam.internal/admin/oauth2/auth/requests/device/verify
-      device: https://iam.internal/ui/device
-      post_device_done: https://iam.internal/api/v0/status
-      error: https://iam.internal//ui/oidc_error
+        issuer: https://iam.internal:8443/
+        public: https://iam.internal:8443/
+      login: https://iam.internal:8443/ui/login
+      consent: https://iam.internal:8443/ui/consent
+      # device: http://iam.internal:8443/admin/oauth2/auth/requests/device/verify
+      device: https://iam.internal:8443/ui/device
+      post_device_done: https://iam.internal:8443/api/v0/status
+      error: https://iam.internal:8443//ui/oidc_error
     ttl:
       # configures how long a user login and consent flow may take. Defaults to 1h.
       login_consent_request: 1h

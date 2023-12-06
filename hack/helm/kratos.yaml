@@ -7,7 +7,7 @@ kratos:
         leak_sensitive_values: true
     serve:
       public:
-        base_url: https://iam.internal
+        base_url: https://iam.internal:8443
         cors:
           enabled: true
       admin:
@@ -30,19 +30,19 @@ kratos:
       url: http://hydra-admin.default.svc.cluster.local:4445
     selfservice:
       allowed_return_urls:
-        - https://iam.internal
+        - https://iam.internal:8443
       default_browser_return_url:
-          https://iam.internal
+          https://iam.internal:8443
       flows:
           error:
-              ui_url: https://iam.internal/ui/error
+              ui_url: https://iam.internal:8443/ui/error
           login:
-              ui_url: https://iam.internal/ui/login
+              ui_url: https://iam.internal:8443/ui/login
           registration:
               after:
                   oidc:
                       hooks:
-                      - hook: session 
+                      - hook: session
       methods:
           password:
               enabled: False
