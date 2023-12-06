@@ -61,7 +61,7 @@ metadata:
 data:
   CALLBACK_URI: http://flow-test.default.svc.cluster.local/api/ready
   # OAUTH_CLIENT_SECRET: KOVbs8SDizELCUQhFEDLYPA4zN
-  OAUTH_CLIENT_ID: cc0bb6ac-deda-4d6c-83bf-c919d8af91ed
+  OAUTH_CLIENT_ID: 7c52496a-159c-48ab-adce-2697bfc83aef
   SCOPES: openid,offline
   PROVIDER: "0" # hydra
   AUTH_URL: http://hydra-public.default.svc.cluster.local:4444/oauth2/auth
