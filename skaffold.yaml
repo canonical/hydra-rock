@@ -68,7 +68,7 @@ profiles:
             repo: https://charts.jetstack.io
             remoteChart: cert-manager
             setValues:
-              installCRDs: true 
+              installCRDs: true
           - name: contour
             remoteChart: oci://registry-1.docker.io/bitnamicharts/contour
 
