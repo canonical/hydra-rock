@@ -231,7 +231,7 @@ after that you should be able to point openssl or certigo to the forwarded ingre
 verify that the cert is valid
 ############################################################
 use the hydra cli to create a client:
-hydra create client --endpoint http://iam.internal:4445 --name auth --grant-type "urn:ietf:params:oauth:grant-type:device_code,authorization_code" --response-type "code" --scope openid,offline
+hydra create client --endpoint http://iam.internal:4445 --name auth --grant-type "urn:ietf:params:oauth:grant-type:device_code,authorization_code" --response-type "code" --scope openid,offline,email,profile
 and then swap the client-id in the flow-test-hydra configmap
 bounce the flow-test pod to pick up the changes
 ############################################################
