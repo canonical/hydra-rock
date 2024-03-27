@@ -16,6 +16,9 @@ build:
       dockerfile: Dockerfile
     platforms: ["linux/amd64"]
   - image: "hydra"
+    sync:
+      infer:
+      - rockcraft.yaml
     custom:
       buildCommand: ./build.sh
       dependencies:
@@ -36,6 +39,7 @@ deploy:
       - name: postgresql
         remoteChart: oci://registry-1.docker.io/bitnamicharts/postgresql
         valuesFiles: ["hack/helm/postgresql.yaml"]
+        wait: true
       - name: hydra
         remoteChart: hydra
         repo: https://k8s.ory.sh/helm/charts
@@ -69,9 +73,11 @@ profiles:
             remoteChart: cert-manager
             setValues:
               installCRDs: true
+            wait: false  
           - name: contour
             remoteChart: oci://registry-1.docker.io/bitnamicharts/contour
-
+            version: 15.0.1
+            wait: false
 
 portForward:
   - resourceType: service
