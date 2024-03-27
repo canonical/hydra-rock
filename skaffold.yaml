@@ -71,6 +71,7 @@ profiles:
               installCRDs: true
           - name: contour
             remoteChart: oci://registry-1.docker.io/bitnamicharts/contour
+            version: 15.0.1
 
 
 portForward:
