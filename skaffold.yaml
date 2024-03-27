@@ -4,6 +4,9 @@ build:
   artifacts:
   - image: "identity-platform-login-ui"
     context: hack/login-ui
+    sync:
+      infer:
+      - rockcraft.yaml
     custom:
       buildCommand: ./build.sh
       dependencies:
@@ -16,6 +19,9 @@ build:
       dockerfile: Dockerfile
     platforms: ["linux/amd64"]
   - image: "hydra"
+    sync:
+      infer:
+      - rockcraft.yaml
     custom:
       buildCommand: ./build.sh
       dependencies:
@@ -69,9 +75,11 @@ profiles:
             remoteChart: cert-manager
             setValues:
               installCRDs: true
+            wait: false
           - name: contour
             remoteChart: oci://registry-1.docker.io/bitnamicharts/contour
-
+            version: 15.0.1
+            wait: false
 
 portForward:
   - resourceType: service

@@ -54,6 +54,6 @@ parts:
       export CGO_ENABLED=0
       go mod download all
       go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
-    source: https://github.com/BuzzBumbleBee/hydra
+    source: https://github.com/canonical/hydra
     source-type: git
-    source-tag: v2.2.0
+    source-branch: canonical

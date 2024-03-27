@@ -62,7 +62,6 @@ data:
   HYDRA_ADMIN_API_URL: http://hydra-admin.default.svc.cluster.local:4445
   CALLBACK_URI: http://flow-test.default.svc.cluster.local/api/ready
   # OAUTH_CLIENT_SECRET: KOVbs8SDizELCUQhFEDLYPA4zN
-  OAUTH_CLIENT_ID:
   SCOPES: openid,offline,email,profile
   PROVIDER: "0" # hydra
   AUTH_URL: http://hydra-public.default.svc.cluster.local:4444/oauth2/auth

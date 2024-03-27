@@ -27,10 +27,9 @@ hydra:
         public: https://iam.internal:8443/
       login: https://iam.internal:8443/ui/login
       consent: https://iam.internal:8443/ui/consent
-      # device: http://iam.internal:8443/admin/oauth2/auth/requests/device/verify
-      device: https://iam.internal:8443/ui/device
+      device_verification: https://iam.internal:8443/ui/device
       post_device_done: https://iam.internal:8443/api/v0/status
-      error: https://iam.internal:8443//ui/oidc_error
+      error: https://iam.internal:8443/ui/oidc_error
     ttl:
       # configures how long a user login and consent flow may take. Defaults to 1h.
       login_consent_request: 1h
