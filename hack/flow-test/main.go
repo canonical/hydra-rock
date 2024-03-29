@@ -202,6 +202,7 @@ func deviceFlow(specs *EnvSpec, logger *zap.SugaredLogger) {
 			AuthURL:       specs.AuthURL,
 			TokenURL:      specs.TokenURL,
 			DeviceAuthURL: specs.DeviceAuthURL,
+			AuthStyle:     oauth2.AuthStyleInHeader,
 		}
 	}
 
@@ -238,7 +239,7 @@ run the following command: $(KUBECTL) get secret -o yaml iam-tls | yq '.data'
 copy the ca.crt and tls.crt into /usr/local/share/ca-certificates/ and run update-ca-certificates
 to get those certs added to the system pool (and trust them), you might need to do
 the same (trust) in your chrome/firefox/safari browser
-after that you should be able to point openssl or certigo to the forwarded ingress on your localhost (port 8443) and 
+after that you should be able to point openssl or certigo to the forwarded ingress on your localhost (port 8443) and
 verify that the cert is valid
 ############################################################
 use the hydra cli to create a client:
