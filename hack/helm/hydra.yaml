@@ -27,7 +27,7 @@ hydra:
         public: https://iam.internal:8443/
       login: https://iam.internal:8443/ui/login
       consent: https://iam.internal:8443/ui/consent
-      device_verification: https://iam.internal:8443/ui/device
+      device_verification: https://iam.internal:8443/ui/device_code
       post_device_done: https://iam.internal:8443/api/v0/status
       error: https://iam.internal:8443/ui/oidc_error
     ttl:
