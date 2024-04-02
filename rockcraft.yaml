@@ -41,7 +41,7 @@ parts:
     build-snaps:
       - go/1.21/stable
     override-build: |
-      src_config_path="github.com/ory/hydra/v2/driver"
+      src_config_path="github.com/canonical/hydra/v2/driver"
       build_ver="${src_config_path}/config.Version"
       build_hash="${src_config_path}/config.Commit"
       build_date="${src_config_path}/config.Date"
