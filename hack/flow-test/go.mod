@@ -3,7 +3,6 @@ module github.com/canonical/hydra-rock/hack/flow-test
 go 1.21.1
 
 require (
-	github.com/go-chi/chi/v5 v5.0.10
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/ory/hydra-client-go/v2 v2.1.1
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
