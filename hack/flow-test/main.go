@@ -156,7 +156,7 @@ type EnvSpec struct {
 	OAuthClientID     string       `envconfig:"oauth_client_id"`
 	OAuthClientSecret string       `envconfig:"oauth_client_secret"`
 	CallbackURI       string       `envconfig:"callback_uri" default:"http://localhost:8000/api/ready"`
-	Scopes            []string     `envconfig:"scopes" default:"openid,offline"`
+	Scopes            []string     `envconfig:"scopes" default:"openid,email,profile,offline"`
 	Provider          ProviderType `envconfig:"provider" default:"0"`
 	AuthURL           string       `envconfig:"auth_url" default:"http://localhost:4444/oauth2/auth"`
 	TokenURL          string       `envconfig:"token_url" default:"http://localhost:4444/oauth2/token"`
@@ -164,7 +164,7 @@ type EnvSpec struct {
 	HydraAdminApiURL  string       `envconfig:"hydra_admin_api_url" default:"http://localhost:4445"`
 }
 
-func registerHydraClient(hydraAdminUrl string) string {
+func registerHydraClient(hydraAdminUrl string, logger *zap.SugaredLogger) string {
 	configuration := client.NewConfiguration()
 	configuration.Servers = []client.ServerConfiguration{
 		{
@@ -178,13 +178,14 @@ func registerHydraClient(hydraAdminUrl string) string {
 
 	oauthClient := client.NewOAuth2Client()
 	oauthClient.SetGrantTypes([]string{"authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code"})
-	oauthClient.SetScope("openid profile offline email")
+	oauthClient.SetScope("openid profile offline email offline_access")
 	oauthClient.SetTokenEndpointAuthMethod("none")
 
 	cc, _, err := c.OAuth2Api.CreateOAuth2Client(context.Background()).OAuth2Client(*oauthClient).Execute()
 	if err != nil {
 		panic("Failed to create oauth2 client " + err.Error())
 	}
+	logger.Infof("Created client, with client_id=%s", *cc.ClientId)
 	return *cc.ClientId
 }
 
@@ -207,19 +208,9 @@ func deviceFlow(specs *EnvSpec, logger *zap.SugaredLogger) {
 	}
 
 	for {
-		verifier := oauth2.GenerateVerifier()
-		challenge := oauth2.S256ChallengeFromVerifier(verifier)
-
-		logger.Debugf("Verifier: %s - Challenge: %s", verifier, challenge)
 		ctx := context.Background()
 
-		response, err := config.DeviceAuth(
-			ctx,
-			// oauth2.SetAuthURLParam("response_type", "code"),
-			// oauth2.SetAuthURLParam("code_verifier", verifier),
-			// oauth2.SetAuthURLParam("code_challenge", challenge),
-			// oauth2.SetAuthURLParam("code_challenge_method", "S256"),
-		)
+		response, err := config.DeviceAuth(ctx)
 
 		if err != nil {
 			logger.Errorf(err.Error())
@@ -241,11 +232,6 @@ to get those certs added to the system pool (and trust them), you might need to 
 the same (trust) in your chrome/firefox/safari browser
 after that you should be able to point openssl or certigo to the forwarded ingress on your localhost (port 8443) and
 verify that the cert is valid
-############################################################
-use the hydra cli to create a client:
-hydra create client --endpoint http://iam.internal:4445 --name auth --grant-type "urn:ietf:params:oauth:grant-type:device_code,authorization_code" --response-type "code" --scope openid,offline,email,profile
-and then swap the client-id in the flow-test-hydra configmap
-bounce the flow-test pod to pick up the changes
 ############################################################
 please enter code %s at %s
 or go to %s
@@ -294,7 +280,7 @@ func main() {
 	}
 
 	if specs.OAuthClientID == "" {
-		specs.OAuthClientID = registerHydraClient(specs.HydraAdminApiURL)
+		specs.OAuthClientID = registerHydraClient(specs.HydraAdminApiURL, logger)
 	}
 
 	go deviceFlow(specs, logger)
