@@ -7,6 +7,7 @@ on:
   push:
     branches-ignore:
       - "main"
+      - "track/**"
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"

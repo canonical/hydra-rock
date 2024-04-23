@@ -1,4 +1,4 @@
-name: Push (main)
+name: Push (main|track)
 
 # When pushing to the "main" branch, we:
 # * build the rock image
@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - main
+      - track/**
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"
