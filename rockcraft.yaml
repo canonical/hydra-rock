@@ -1,7 +1,7 @@
 name: hydra
 base: bare
 build-base: ubuntu@22.04
-version: "2.2.0"
+version: "2.2.0-canonical"
 summary: Ory Hydra
 description: |
   Ory Hydra is a hardened and certified OAuth 2.0 and OpenID Connect provider.
@@ -40,9 +40,10 @@ parts:
       export CGO_ENABLED=0
       go mod download all
       go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
-    source: https://github.com/ory/hydra
+    source: https://github.com/canonical/hydra
     source-type: git
-    source-tag: v2.2.0
+    # TODO: use tag once we release a version
+    source-branch: canonical
 
   deb-security-manifest:
     plugin: nil
