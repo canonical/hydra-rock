@@ -18,9 +18,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install skopeo
+      # Use the rockcraft snap to get skopeo because the snap and the apt package on the ubuntu
+      # archives are very old. Only rockcraft=latest/edge has a newer skopeo version
+      # TODO(nsklikas): Either use rockcraft=latest/stable or install skopeo from apt when one
+      # of them is updated
+      - name: Install Rockcraft to get skopeo
         run: |
-          sudo snap install --devmode --channel edge skopeo
+          sudo snap install --classic --channel latest/edge rockcraft
 
       - name: Install yq
         run: |
@@ -35,7 +39,7 @@ jobs:
           image_name="$(yq '.name' rockcraft.yaml)"
           version="$(yq '.version' rockcraft.yaml)"
           rock_file=$(ls *.rock | tail -n 1)
-          sudo skopeo \
+          sudo rockcraft.skopeo \
             --insecure-policy \
             copy \
             oci-archive:"${rock_file}" \
