@@ -1,0 +1,66 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-ca
+spec:
+  isCA: true
+  commonName: selfsigned-ca
+  secretName: root-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ca-issuer
+spec:
+  ca:
+    secretName: root-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: iam
+  namespace: default
+spec:
+  subject:
+    organizations:
+      - canonical
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  usages:
+    - server auth
+    - client auth
+  # At least one of a DNS Name, URI, or IP address is required.
+  dnsNames:
+  - iam.internal
+  - iam.default.svc.cluster.local
+  - kratos-public.default.svc.cluster.local
+  - kratos-admin.default.svc.cluster.local
+  - hydra-public.default.svc.cluster.local
+  - hydra-admin.default.svc.cluster.local
+  # ipAddresses:
+  #   - 192.168.0.5
+  # Issuer references are always required.
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-issuer
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  secretName: iam-tls
+
