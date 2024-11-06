@@ -1,10 +1,10 @@
 name: CI
 
-# When pushing to the "main" branch, we:
+# When pushing to the "main" branch or a tag, we:
 # * build the rock image
 # * publish the image
 # * scan the image and upload the artifacts to the repository
-
+# if not any of those conditions apply, we simply build
 on:
   push:
     branches:
@@ -28,7 +28,8 @@ jobs:
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: build
     uses: ./.github/workflows/publish.yaml
-
+    secrets:
+      token: ${{ secrets.PAT_TOKEN }}
   scan:
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: publish
