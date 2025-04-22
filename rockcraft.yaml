@@ -41,7 +41,7 @@ parts:
       # TODO(@shipperizer) thing about using a git patch for the go.mod
       go mod edit -replace github.com/jackc/pgproto3/v2=github.com/jackc/pgproto3/v2@v2.3.3
       go mod edit -replace github.com/jackc/pgx/v4=github.com/jackc/pgx/v4@v4.18.2
-      go mod edit -replace golang.org/x/crypto=golang.org/x/crypto@v0.31.0
+      go mod edit -replace golang.org/x/crypto=golang.org/x/crypto@v0.35.0
       go mod edit -replace  golang.org/x/net/html=golang.org/x/net/html@v0.33.0
       go mod edit -replace github.com/golang-jwt/jwt/v4=github.com/golang-jwt/jwt/v4@v4.5.2
       go mod edit -replace  github.com/golang-jwt/jwt/v5=github.com/golang-jwt/jwt/v5@v5.2.2
