@@ -14,6 +14,11 @@ This repository holds all the necessary files to build rocks for the
 Canonical forked Hydra. The Hydra rock is used by
 the [hydra-operator](https://github.com/canonical/hydra-operator) charm.
 
+## Security
+
+Please see [SECURITY.md](https://github.com/canonical/hydra-rock/blob/main/SECURITY.md)
+for guidelines on reporting security issues.
+
 ## Contributing
 
 Please refer to the [CONTRIBUTING](CONTRIBUTING.md) for developer guidance.
