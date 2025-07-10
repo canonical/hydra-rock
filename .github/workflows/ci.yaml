@@ -22,15 +22,28 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yaml
-
-  publish:
+    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    with:
+      structure-tests-enabled: true
+  gh-publish:
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: build
-    uses: ./.github/workflows/publish.yaml
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    with:
+      rock: ${{ needs.build.outputs.rock }}
+  oci-publish:
+    # only release to oci-factory in case of release
+    if: github.ref_type == 'tag'
+    needs: build
+    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    with:
+      edge-release: false
+      eol-stable-release: "3 month"
     secrets:
-      token: ${{ secrets.PAT_TOKEN }}
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
   scan:
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
-    needs: publish
-    uses: ./.github/workflows/scan.yaml
+    needs: gh-publish
+    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    with:
+      image: ${{ needs.gh-publish.outputs.image }}

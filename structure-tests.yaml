@@ -1,0 +1,17 @@
+schemaVersion: 2.0.0
+
+fileExistenceTests:
+- name: "no go binary"
+  path: "/usr/bin/go"
+  shouldExist: false
+- name: "application go binary"
+  path: "/bin/hydra"
+  shouldExist: true
+- name: "pebble entrypoint"
+  path: "/bin/pebble"
+  shouldExist: true
+commandTests:
+- name: "application version"
+  command: "hydra"
+  args: ["version"]
+  exitCode: 0
