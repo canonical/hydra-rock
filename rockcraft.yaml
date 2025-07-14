@@ -20,7 +20,7 @@ parts:
   certificates:
     plugin: nil
     stage-packages:
-      - ca-certificates
+      - ca-certificates_data
 
   hydra:
     plugin: go
