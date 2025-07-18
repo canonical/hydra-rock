@@ -21,6 +21,7 @@ parts:
     plugin: nil
     stage-packages:
       - ca-certificates_data
+      - base-files_chisel
 
   hydra:
     plugin: go
