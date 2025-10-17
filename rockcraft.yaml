@@ -26,7 +26,7 @@ parts:
   hydra:
     plugin: go
     build-snaps:
-      - go/1.21/stable
+      - go/1.23/stable
     override-build: |
       src_config_path="github.com/ory/hydra/v2/driver"
       build_ver="${src_config_path}/config.Version"
