@@ -22,20 +22,20 @@ on:
 
 jobs:
   build:
-    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
       structure-tests-enabled: true
   gh-publish:
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
       rock: ${{ needs.build.outputs.rock }}
   oci-publish:
     # only release to oci-factory in case of release
     if: github.ref_type == 'tag'
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
       edge-release: false
       eol-stable-release: "3 month"
@@ -44,6 +44,6 @@ jobs:
   scan:
     if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: gh-publish
-    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@f18247249f506f3c9210b86e43a2c4dd063088c5 # v1.8.7
+    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
       image: ${{ needs.gh-publish.outputs.image }}
