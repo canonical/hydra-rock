@@ -1,17 +1,9 @@
 name: CI
 
-# When pushing to the "main" branch or a tag, we:
-# * build the rock image
-# * publish the image
-# * scan the image and upload the artifacts to the repository
-# if not any of those conditions apply, we simply build
 on:
   push:
     branches:
      - "main"
-     - "release-**"
-    tags:
-     - "v**"
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"
@@ -26,14 +18,13 @@ jobs:
     with:
       structure-tests-enabled: true
   gh-publish:
-    if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
     uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
       rock: ${{ needs.build.outputs.rock }}
   oci-publish:
-    # only release to oci-factory in case of release
-    if: github.ref_type == 'tag'
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
     uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
@@ -42,7 +33,7 @@ jobs:
     secrets:
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
   scan:
-    if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: gh-publish
     uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@2a4ae518f9c792dcdf14d05f8d86e3d72e160d96 # v1.9.0
     with:
