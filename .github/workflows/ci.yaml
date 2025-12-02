@@ -20,7 +20,7 @@ jobs:
   gh-publish:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
     with:
       rock: ${{ needs.build.outputs.rock }}
   oci-publish:
