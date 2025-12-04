@@ -1,7 +1,7 @@
 name: hydra
 base: bare
 build-base: ubuntu@22.04
-version: "2.2.0"
+version: "25.4.0"
 summary: Ory Hydra
 description: |
   Ory Hydra is a hardened and certified OAuth 2.0 and OpenID Connect provider.
@@ -38,29 +38,12 @@ parts:
                        -X ${build_hash}=$(git -C "${CRAFT_PART_SRC}" rev-parse HEAD) \
                        -X ${build_date}=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-      # Addressing CVE
-      # TODO(@shipperizer) thing about using a git patch for the go.mod
-      go mod edit -replace golang.org/x/crypto=golang.org/x/crypto@v0.35.0
-      go mod edit -replace golang.org/x/net/html=golang.org/x/net/html@v0.38.0
-      go mod edit -replace github.com/golang-jwt/jwt/v4=github.com/golang-jwt/jwt/v4@v4.5.2
-      go mod edit -replace github.com/golang-jwt/jwt/v5=github.com/golang-jwt/jwt/v5@v5.2.2
-      # TODO: Remove when moving to upstream hydra 2.3.0+
-      go mod edit -replace github.com/jackc/pgproto3/v2=github.com/jackc/pgproto3/v2@v2.3.3
-      go mod edit -replace github.com/jackc/pgx/v4=github.com/jackc/pgx/v4@v4.18.2
-      go mod edit -replace github.com/jackc/pgconn=github.com/jackc/pgconn@v1.14.3
-      go mod edit -replace github.com/go-jose/go-jose/v3=github.com/go-jose/go-jose/v3@v3.0.4
-      go mod edit -replace github.com/golang/glog=github.com/golang/glog@v1.2.4
-      go mod edit -replace github.com/rs/cors=github.com/rs/cors@v1.11.1
-      go mod edit -replace google.golang.org/protobuf=google.golang.org/protobuf@v1.33.0
-      go mod edit -replace github.com/hashicorp/go-retryablehttp=github.com/hashicorp/go-retryablehttp@v0.7.7
-      go mod edit -replace golang.org/x/oauth2=golang.org/x/oauth2@v0.27.0
-
       export CGO_ENABLED=0
       go mod download all
       go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
     source: https://github.com/ory/hydra
     source-type: git
-    source-tag: v2.2.0
+    source-tag: v25.4.0
 
   deb-security-manifest:
     plugin: make
