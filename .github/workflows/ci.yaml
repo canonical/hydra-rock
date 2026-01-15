@@ -14,19 +14,19 @@ on:
 
 jobs:
   build:
-    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
+    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@7ec3565943646a4abe70497e354edac4357349a8 # v1.9.3
     with:
       structure-tests-enabled: true
   gh-publish:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@7ec3565943646a4abe70497e354edac4357349a8 # v1.9.3
     with:
       rock: ${{ needs.build.outputs.rock }}
   oci-publish:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
+    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@7ec3565943646a4abe70497e354edac4357349a8 # v1.9.3
     with:
       edge-release: false
       eol-stable-release: "3 month"
@@ -35,6 +35,6 @@ jobs:
   scan:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: gh-publish
-    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
+    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@7ec3565943646a4abe70497e354edac4357349a8 # v1.9.3
     with:
       image: ${{ needs.gh-publish.outputs.image }}
