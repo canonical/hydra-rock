@@ -4,6 +4,7 @@ on:
   push:
     branches:
      - "main"
+     - "2/stable"
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"
@@ -18,13 +19,13 @@ jobs:
     with:
       structure-tests-enabled: true
   gh-publish:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/2/stable' }}
     needs: build
     uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
     with:
       rock: ${{ needs.build.outputs.rock }}
   oci-publish:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/2/stable' }}
     needs: build
     uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
     with:
@@ -33,7 +34,7 @@ jobs:
     secrets:
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
   scan:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/2/stable' }}
     needs: gh-publish
     uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@f858d2dce01066546803a4279c3525f053ca7d0f # v1.9.2
     with:
