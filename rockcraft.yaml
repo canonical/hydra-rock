@@ -38,6 +38,10 @@ parts:
                        -X ${build_hash}=$(git -C "${CRAFT_PART_SRC}" rev-parse HEAD) \
                        -X ${build_date}=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
+      # Addressing CVE
+      # TODO(@shipperizer) thing about using a git patch for the go.mod
+      go mod edit -replace go.opentelemetry.io/otel/sdk=go.opentelemetry.io/otel/sdk@v1.40.0
+
       export CGO_ENABLED=0
       go mod download all
       go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
