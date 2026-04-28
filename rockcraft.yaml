@@ -43,6 +43,8 @@ parts:
       go mod edit -replace github.com/go-jose/go-jose/v3=github.com/go-jose/go-jose/v3@v3.0.5
       go mod edit -replace go.opentelemetry.io/otel/sdk=go.opentelemetry.io/otel/sdk@v1.43.0
       go mod edit -replace google.golang.org/grpc=google.golang.org/grpc@v1.79.3
+      go mod edit -replace github.com/jackc/pgx/v5=github.com/jackc/pgx/v5@v5.9.2
+      go mod tidy
             
       export CGO_ENABLED=0
       go mod download all
