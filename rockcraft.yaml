@@ -9,6 +9,7 @@ license: Apache-2.0
 run-user: _daemon_
 platforms:
   amd64:
+  arm64:
 
 services:
   hydra:
@@ -51,7 +52,7 @@ parts:
             
       export CGO_ENABLED=0
       go mod download all
-      go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
+      GOARCH="${CRAFT_ARCH_BUILD_FOR}" go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/hydra
     source: https://github.com/ory/hydra
     source-type: git
     source-tag: v26.2.0
