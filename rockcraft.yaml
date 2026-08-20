@@ -1,6 +1,6 @@
 name: hydra
 base: bare
-build-base: ubuntu@22.04
+build-base: ubuntu@26.04
 version: "26.2.0"
 summary: Ory Hydra
 description: |
