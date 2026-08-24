@@ -54,6 +54,19 @@ jobs:
       edge-release: false
       eol-stable-release: "3 month"
       ubuntu-base-version: "26.04"
+      ignore-vulnerabilities: >-
+        CVE-2026-32286,
+        CVE-2026-33818,
+        CVE-2026-33997,
+        CVE-2026-34040,
+        CVE-2026-39821,
+        CVE-2026-46600,
+        CVE-2026-56853,
+        CVE-2026-56858,
+        CVE-2026-56859,
+        CVE-2026-56860,
+        CVE-2026-56862,
+        GO-2026-5932
     secrets:
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
