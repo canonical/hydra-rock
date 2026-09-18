@@ -51,10 +51,10 @@ parts:
       go mod edit -replace github.com/moby/moby/api=github.com/moby/moby/api@v1.54.2
       go mod edit -replace github.com/moby/moby/client=github.com/moby/moby/client@v0.4.1
       go mod edit -replace golang.org/x/crypto=golang.org/x/crypto@v0.57.0
-      go mod edit -replace golang.org/x/mod=golang.org/x/mod@v0.40.0
+      go mod edit -replace golang.org/x/mod=golang.org/x/mod@v0.41.0
       go mod edit -replace golang.org/x/net=golang.org/x/net@v0.59.0
       go mod edit -replace golang.org/x/text=golang.org/x/text@v0.42.0
-      go mod edit -replace golang.org/x/sys=golang.org/x/sys@v0.47.0
+      go mod edit -replace golang.org/x/sys=golang.org/x/sys@v0.48.0
       go mod tidy
             
       export CGO_ENABLED=0
