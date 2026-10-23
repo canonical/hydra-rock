@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         architecture: ${{ fromJson(needs.get-architectures.outputs.architectures) }}
-    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@9bbee2e8d44fe72c7e6733d132ea63e844943133 # v1.17.2
+    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@bacce5fe2bd598f8daa69c64438fb872334e2d0a # v1.18.0
     with:
       structure-tests-enabled: true
       architecture: ${{ matrix.architecture }}
@@ -44,12 +44,12 @@ jobs:
     permissions:
       packages: write
       contents: read
-    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@9bbee2e8d44fe72c7e6733d132ea63e844943133 # v1.17.2
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@bacce5fe2bd598f8daa69c64438fb872334e2d0a # v1.18.0
 
   oci-publish:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
-    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@9bbee2e8d44fe72c7e6733d132ea63e844943133 # v1.17.2
+    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@bacce5fe2bd598f8daa69c64438fb872334e2d0a # v1.18.0
     with:
       edge-release: false
       eol-stable-release: "3 month"
@@ -78,6 +78,6 @@ jobs:
       actions: read
       contents: read
       packages: read
-    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@9bbee2e8d44fe72c7e6733d132ea63e844943133 # v1.17.2
+    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@bacce5fe2bd598f8daa69c64438fb872334e2d0a # v1.18.0
     with:
       image: ${{ needs.gh-publish.outputs.image }}
