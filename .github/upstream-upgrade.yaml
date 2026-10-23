@@ -1,0 +1,22 @@
+# Configuration for canonical/identity-team upstream-upgrade workflows.
+# Upstream repository, tag prefix, and rock image are auto-detected from rockcraft.yaml.
+
+trusted_link_hosts:
+  - www.ory.sh
+
+charms:
+  - key: hydra
+    repo: canonical/hydra-operator
+    description: >-
+      Deploys Ory Hydra OAuth 2.0 and OpenID Connect server backed by
+      PostgreSQL behind ingress.
+    files:
+      - charmcraft.yaml
+      - src/charm.py
+      - src/cli.py
+      - src/configs.py
+      - src/constants.py
+      - src/env_vars.py
+      - src/integrations.py
+      - src/oauth.py
+      - src/services.py
